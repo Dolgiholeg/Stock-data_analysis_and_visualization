@@ -1,3 +1,5 @@
+Реализовать функцию calculate_and_display_average_price(data), которая вычисляет и выводит среднюю цену закрытия акций за заданный период.
+    
     import data_download as dd  # импорт из файла data_download результатов работы функций
 
 
