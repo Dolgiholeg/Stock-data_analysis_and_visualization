@@ -33,3 +33,29 @@ def calculate_and_display_average_price(data):
     axis=0 - движение вниз по строкам"""
     average_price = data['Close'].mean(axis=0)
     print(f'СРЕДНЯЯ ЦЕНА ЗАКРЫТИЯ АКЦИЙ ЗА ЗАДАННЫЙ ПЕРИОД:":  {average_price}\n')
+
+
+def notify_if_strong_fluctuations(data, threshold):
+    """Анализирует данные и уведомляет пользователя, если цена акций колебалась более чем на заданный процент за период.
+    Получает DataFrame с данными за указанный период и заданный пользователем порог колебаний цены в процентах
+    """
+    list_prices_close = data['Close'].tolist()  # получаем список значений закрытия из столбца Close(DataFrame) за указанный период
+    max_price, min_price = max(list_prices_close), min(list_prices_close)  # определяем минимальное и максимальное
+    # значение полученного списка значений закрытия (столбец Close(DataFrame))
+    average_price = (max_price + min_price) / 2  # определяем среднее значение цены между минимальной и максимальной
+    # ценой закрытия
+    percent_average_price = average_price * 0.01  # определяем 1 процент от средней цены между минимальной и максимальной
+    # ценой закрытия
+    float_threshold = float(threshold)  # переводим введённое значение допустимого колебания цены от пользователя(str)
+    # в число с плавающей запятой(float)
+    acceptable_fluctuation = percent_average_price * float_threshold  # определяем допустимое колебание цены акции
+    min_acceptable_price = average_price - acceptable_fluctuation  # определяем минимально допустимую цену акции
+    max_acceptable_price = average_price + acceptable_fluctuation  # определяем максимально допустимую цену акции
+    for price in list_prices_close:  # перебираем список значений закрытия из столбца Close(DataFrame) за указанный период
+        if price > max_acceptable_price:  # если цена закрытия больше максимально допустимой цены акции
+            print(f'ПРЕВЫШЕН ПОРОГ КОЛЕБАНИЙ ЦЕНЫ ЗАКРЫТИЯ, ЦЕНА АКЦИИ ПОДНЯЛАСЬ НА {(price - average_price) / percent_average_price}%')
+        elif price < min_acceptable_price:  # если цена закрытия меньше минимально допустимой цены акции
+            print(f'ПРЕВЫШЕН ПОРОГ КОЛЕБАНИЙ ЦЕНЫ ЗАКРЫТИЯ, ЦЕНА АКЦИИ ОПУСТИЛАСЬ НА {(average_price - price) / percent_average_price}%')
+        else:
+            print(f'КОЛЕБАНИЕ ЦЕНЫ АКЦИЙ, НАХОДИЛОСЬ В ПРЕДЕЛАХ УКАЗАННОГО ДОПУСТИМОГО ПОРОГА КОЛЕБАНИЙ {float_threshold}%')
+

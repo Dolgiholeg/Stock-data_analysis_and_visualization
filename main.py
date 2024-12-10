@@ -28,6 +28,11 @@ def main():
     # Функция calculate_and_display_average_price файл data_download
     dd.calculate_and_display_average_price(stock_data)
 
+    # Уведомление о сильных колебаниях, если цена акций колебалась более чем на заданный процент за период
+    # Функция notify_if_strong_fluctuations файл data_download
+    threshold = input("ВВЕДИТЕ ПОРОГ КОЛЕБАНИЙ ЦЕНЫ В ПРОЦЕНТАХ:»")
+    dd.notify_if_strong_fluctuations(stock_data, threshold)
+
 
 # Запуск процесса
 if __name__ == "__main__":
