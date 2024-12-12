@@ -33,6 +33,11 @@ def main():
     threshold = input("ВВЕДИТЕ ПОРОГ КОЛЕБАНИЙ ЦЕНЫ В ПРОЦЕНТАХ:»")
     dd.notify_if_strong_fluctuations(stock_data, threshold)
 
+    # Сохранение данных об акциях в CSV файл
+    # Функция export_data_to_csv файл data_download
+    filename = 'dataframe'
+    dd.export_data_to_csv(stock_data, filename)
+
 
 # Запуск процесса
 if __name__ == "__main__":
