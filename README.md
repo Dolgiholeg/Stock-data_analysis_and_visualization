@@ -1,5 +1,6 @@
-Задача №3. Реализовать функционал: Экспорт данных в CSV
-    
+Реализовать функционал: Уведомление о сильных колебаниях
+файл main.pu 
+
     import data_download as dd  # импорт из файла data_download результатов работы функций
 
 
@@ -35,21 +36,14 @@
     threshold = input("ВВЕДИТЕ ПОРОГ КОЛЕБАНИЙ ЦЕНЫ В ПРОЦЕНТАХ:»")
     dd.notify_if_strong_fluctuations(stock_data, threshold)
 
-    # Сохранение данных об акциях в CSV файл
-    # Функция export_data_to_csv файл data_download
-    filename = 'dataframe'
-    dd.export_data_to_csv(stock_data, filename)
 
     # Запуск процесса
     if __name__ == "__main__":
     main()
-    
-    import yfinance as yf  # импорт библиотеки yfinance с использованием псевдонима yf - предоставляет доступ к финансовым
-    # данным из Yahoo Finance.
-    import pandas as pd  # импорт библиотеки Pandas - мощный инструмент для анализа и обработки табличных данных
-    # (pd- общепринятое сокращение для Pandas в коде)
-    from tabulate import tabulate  # импорт библиотеки tabulate - красивое оформление таблицы
 
+файл data_download.pu
+
+    import yfinance as yf  # импорт библиотеки yfinance с использованием псевдонима yf - предоставляет доступ к финансовым данным из Yahoo Finance.
 
 
     def fetch_stock_data(ticker, period='1mo'):
@@ -85,6 +79,7 @@
     average_price = data['Close'].mean(axis=0)
     print(f'СРЕДНЯЯ ЦЕНА ЗАКРЫТИЯ АКЦИЙ ЗА ЗАДАННЫЙ ПЕРИОД:":  {average_price}\n')
 
+
     def notify_if_strong_fluctuations(data, threshold):
     """Анализирует данные и уведомляет пользователя, если цена акций колебалась более чем на заданный процент за период.
     Получает DataFrame с данными за указанный период и заданный пользователем порог колебаний цены в процентах
@@ -103,21 +98,12 @@
     max_acceptable_price = average_price + acceptable_fluctuation  # определяем максимально допустимую цену акции
     for price in list_prices_close:  # перебираем список значений закрытия из столбца Close(DataFrame) за указанный период
         if price > max_acceptable_price:  # если цена закрытия больше максимально допустимой цены акции
-            print(f'ПРЕВЫШЕН ПОРОГ КОЛЕБАНИЙ ЦЕНЫ ЗАКРЫТИЯ, ЦЕНА АКЦИИ ПОДНЯЛАСЬ НА {((price - average_price) / percent_average_price):.4f}%')
+            print(f'ПРЕВЫШЕН ПОРОГ КОЛЕБАНИЙ ЦЕНЫ ЗАКРЫТИЯ, ЦЕНА АКЦИИ ПОДНЯЛАСЬ НА {(price - average_price) / percent_average_price}%')
         elif price < min_acceptable_price:  # если цена закрытия меньше минимально допустимой цены акции
-            print(f'ПРЕВЫШЕН ПОРОГ КОЛЕБАНИЙ ЦЕНЫ ЗАКРЫТИЯ, ЦЕНА АКЦИИ ОПУСТИЛАСЬ НА {((average_price - price) / percent_average_price):.4f}%')
+            print(f'ПРЕВЫШЕН ПОРОГ КОЛЕБАНИЙ ЦЕНЫ ЗАКРЫТИЯ, ЦЕНА АКЦИИ ОПУСТИЛАСЬ НА {(average_price - price) / percent_average_price}%')
         else:
             print(f'КОЛЕБАНИЕ ЦЕНЫ АКЦИЙ, НАХОДИЛОСЬ В ПРЕДЕЛАХ УКАЗАННОГО ДОПУСТИМОГО ПОРОГА КОЛЕБАНИЙ {float_threshold}%')
 
+![2024-12-10_16-25-04](https://github.com/user-attachments/assets/5e5c0adf-df8a-4afc-bfb6-b5f215af92f5)
 
-    def export_data_to_csv(data, filename):
-    """Экспортирует полученные данные об акциях в CSV файл.
-    Получает DataFrame с данными за указанный период и дополнительным столбцом Moving_Average и название CSV файла
-    """
-    data.to_csv('dataframe.csv')  # преобразуем полученную DataFrame в CSV файл(функция to_csv) с названием dataframe
-    df = pd.read_csv('dataframe.csv')  # читаем CSV файл(функция read_csv) с названием dataframe
-    headers = ['№', 'Date', 'Open', 'High', 'Low', 'Close', 'Volume', 'Dividends', 'Stock Splits', 'Moving_Average']  
-    # назначаем название столбцов
-    print('************************ПОЛУЧЕННЫЕ ДАННЫЕ ОБ АКЦИЯХ************************')
-    print(tabulate(df, headers=headers, tablefmt='grid', stralign='center'))  # выводим в консоль, 
-    # сохранённую DataFrame из CSV файл с названием dataframe
+
