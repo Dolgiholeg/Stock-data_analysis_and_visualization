@@ -260,9 +260,5 @@
 
     plt.savefig(filename)  # сохранение созданной фигуры, в файл с именем «filename.png».
     print(f"График сохранен как {filename}")
-![2024-12-18_09-37-10.png](..%2F..%2F..%2FUsers%2FUser%2FDownloads%2F2024-12-18_09-37-10.png)
-![2024-12-18_09-37-42.png](..%2F..%2F..%2FUsers%2FUser%2FDownloads%2F2024-12-18_09-37-42.png)
-![2024-12-18_09-38-06.png](..%2F..%2F..%2FUsers%2FUser%2FDownloads%2F2024-12-18_09-38-06.png)
-![2024-12-18_09-35-54.png](..%2F..%2F..%2FUsers%2FUser%2FDownloads%2F2024-12-18_09-35-54.png)
 
 
