@@ -102,7 +102,6 @@ def calculate_rsi(data, window=14):
 
     # Рассчитываем RSI
     rsi = 100 - (100 / (1 + rs))
-
     # Добавляем рассчитанные значения RSI в качестве нового столбца в наборе данных
     data['RSI'] = rsi
     return data

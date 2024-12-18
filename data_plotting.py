@@ -67,7 +67,7 @@ def create_and_save_plot(data, ticker, period, filename=None):
         # _stock_price_chart.png
 
     plt.savefig(filename)  # сохранение созданной фигуры, в файл с именем «filename.png».
-    print(f"График сохранен как {filename}")
+    print(f"График сохранен {filename}")
 
 
 

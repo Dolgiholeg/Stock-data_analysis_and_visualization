@@ -260,3 +260,5 @@
 
     plt.savefig(filename)  # сохранение созданной фигуры, в файл с именем «filename.png».
     print(f"График сохранен как {filename}")
+
+

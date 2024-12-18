@@ -44,7 +44,7 @@ def main():
     stock_data = dd.calculate_rsi(stock_data, window=14)
     stock_data = dd.calculate_macd(stock_data, fast_window=12, slow_window=26, signal_window=9)
 
-    # Построим график данных
+    # Построим график данных акций
     dplt.create_and_save_plot(stock_data, ticker, period)
 
 
