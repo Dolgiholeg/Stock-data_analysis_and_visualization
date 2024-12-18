@@ -1,4 +1,5 @@
 import data_download as dd  # импорт из файла data_download результатов работы функций
+import data_plotting as dplt  # импорт из файла data_plotting результатов работы функций
 
 
 def main():
@@ -37,6 +38,14 @@ def main():
     # Функция export_data_to_csv файл data_download
     filename = 'dataframe'
     dd.export_data_to_csv(stock_data, filename)
+
+    # Вычисление технических индексов RSI и MACD
+    # Функции calculate_rsi и calculate_macd файл data_download
+    stock_data = dd.calculate_rsi(stock_data, window=14)
+    stock_data = dd.calculate_macd(stock_data, fast_window=12, slow_window=26, signal_window=9)
+
+    # Построим график данных
+    dplt.create_and_save_plot(stock_data, ticker, period)
 
 
 # Запуск процесса
