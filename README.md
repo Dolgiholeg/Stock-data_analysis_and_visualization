@@ -1,11 +1,10 @@
-Задача №4. Реализовать функционал: Добавление дополнительных технических индикаторов
-
-файл main.pu
+Задача №5. Реализовать функционал: Улучшенное управление временными периодами
 
     import data_download as dd  # импорт из файла data_download результатов работы функций
     import data_plotting as dplt  # импорт из файла data_plotting результатов работы функций
 
-    def main():
+
+def main():
     """ Основная функция, управляющая процессом загрузки, обработки данных и их визуализации. Запрашивает
      у пользователя ввод данных, вызывает функции загрузки и обработки данных, а затем передаёт результаты
       на визуализацию.
@@ -20,10 +19,14 @@
           " '6mo'(6 месяцев), '1y'(1 год), '2y'(2 года), '5y'(5 лет), '10y'(10 лет), 'ytd'(с начала года), "
           " 'max'(максимум): ")
 
-    period = input("ВВЕДИТЕ ПЕРИОД АНАЛИЗА ДАННЫХ:»")
-
     # Получение данных о запасах, функция fetch_stock_data файл data_download
-    stock_data = dd.fetch_stock_data(ticker, period)
+    period = input("введите период или пропустить(ENTER) для ввода конкретных дат:»")
+    if not period:
+        start_date = input("Введите дату начала анализа в формате 'ГГГГ-ММ-ДД' (например, '2022-01-01'): ")
+        end_date = input("Введите дату окончания анализа в формате 'ГГГГ-ММ-ДД' (например, '2022-12-31'): ")
+        stock_data = dd.fetch_stock_data(ticker, start_date=start_date, end_date=end_date)
+    else:
+        stock_data = dd.fetch_stock_data(ticker, period=period)
 
     # Добавление скользящего среднего значение к данным, функция add_moving_average файл data_download
     stock_data = dd.add_moving_average(stock_data)
@@ -64,17 +67,23 @@
     from tabulate import tabulate  # импорт библиотеки tabulate - красивое оформление таблицы
     
     
-    def fetch_stock_data(ticker, period='1mo'):
+    def fetch_stock_data(ticker, period=None, start_date=None, end_date=None):
     """Получает исторические данные об акциях для указанного тикера и временного периода. Возвращает DataFrame с данными.
     Тикер — это краткое название в биржевой информации котируемых инструментов (акций, облигаций, индексов).
     Является уникальным идентификатором в рамках одной биржи или информационной системы. Используется для того,
     чтобы постоянно не печатать в сводках полное наименование ценных бумаг или других объектов торговли.
     DataFrame - структура хранения данных, организованных в двух изменениях(строках и столбцах)
     и соответствующих этим строкам и столбцам меток """
+    data = None
     stock = yf.Ticker(ticker)  # создаём объект модуля Ticker с заданным тикером.
     # Модуль Ticker позволяет получить список последних финансовых новостей по заданному тикеру.
-    data = stock.history(period=period)  # получаем исторические данные об акциях для указанного тикера и временного периода.
-    return data  # возвращаем DataFrame с данными
+    if period:
+        data = stock.history(period=period)  # получаем исторические данные об акциях для указанного тикера и
+        # временного периода.
+    elif start_date and end_date:
+        data = stock.history(start=start_date, end=end_date)  # получаем исторические данные об акциях
+        # для указанного тикера и временного периода в указанном диапазоне дат.
+    return data
 
 
     def add_moving_average(data, window_size=5):
@@ -192,15 +201,17 @@
 
     import matplotlib.pyplot as plt  # импортируем модуль pyplot из библиотеки Matplotlib под псевдонимом plt
     import pandas as pd
-    
-    
+    import matplotlib.dates as mdates  # импорт модуля для работы с датами в библиотеке Matplotlib
+
+
     def create_and_save_plot(data, ticker, period, filename=None):
-    """
+        """
     Создает и сохраняет график цены акций, скользящего среднего, RSI, MACD и стандартного отклонения.
     Получает - data: DataFrame с историческими данными; ticker: Символ акции; period: Период данных; filename: Имя файла
     для сохранения графика.
     """
-    plt.figure(figsize=(20, 15))  # устанавливаем размер фигуры в дюймах
+    plt.figure(figsize=(20, 12))  # устанавливаем размер фигуры в дюймах
+
     # График цены и скользящего среднего
     plt.subplot(4, 1, 1)  # создаём график с четырьмя строками, одним столбцом и первым индексом
     if 'Date' not in data:
@@ -221,10 +232,12 @@
         plt.plot(data['Date'], data['Close'], label='Цена закрытия')
         plt.plot(data['Date'], data['Moving_Average'], label='Скользящая средняя')
 
+    plt.gca().xaxis.set_major_formatter(mdates.DateFormatter("%d.%m.%y"))  # меняем формат даты по оси Х на ДД.ММ.ГГ
     plt.title(f"{ticker} Цена акций с течением времени")  # назначаем название графика
     plt.xlabel("Дата")  # ось X на графике будет обозначать дату
     plt.ylabel("Цена")  # ось Y на графике будет обозначать цену
     plt.legend()  # добавляем легенду в график
+    plt.subplots_adjust(hspace=0.5)  # делаем отступ от графика
 
     # График RSI
     plt.subplot(4, 1, 2)  # создаём график с четырьмя строками, одним столбцом и вторым индексом
@@ -234,10 +247,12 @@
         # линии на высоте y=70 - "Покупай"
         plt.axhline(y=30, color='g', linestyle='--', label='Продавай')  # добавление зелёной пунктирной горизонтальной
         # линии на высоте y=30 - "Продавай"
+        plt.gca().xaxis.set_major_formatter(mdates.DateFormatter("%d.%m.%y"))
         plt.title('Индекс относительной силы (RSI)')
         plt.xlabel("Дата")
         plt.ylabel("RSI")
         plt.legend()
+        plt.subplots_adjust(hspace=0.5)
     else:
         print("Столбец 'RSI' отсутствует в данных.")
 
@@ -247,6 +262,7 @@
         plt.plot(data.index, data['MACD'], label='MACD')  # визуализация графика индикатора схождения-расхождения
         # скользящих средних (MACD)
         plt.plot(data.index, data['Signal'], label='Signal')  # визуализация графика сигнальной линии(Signal)
+        plt.gca().xaxis.set_major_formatter(mdates.DateFormatter("%d.%m.%y"))
         plt.title('Конвергенция - Дивергенция скользящей средней (MACD)')
         plt.xlabel("Дата")
         plt.ylabel("MACD")
@@ -259,10 +275,7 @@
         # _stock_price_chart.png
 
     plt.savefig(filename)  # сохранение созданной фигуры, в файл с именем «filename.png».
-    print(f"График сохранен как {filename}")
-![2024-12-18_09-37-10](https://github.com/user-attachments/assets/de0d1a68-2e1f-4133-9eee-f6d1f0de3687)
-![2024-12-18_09-37-42](https://github.com/user-attachments/assets/f8e6c747-ae79-481a-9cdb-2d067eccba73)
-![2024-12-18_09-38-06](https://github.com/user-attachments/assets/676f3bd5-4d2d-479b-96e9-c66cb2124aaa)
-![2024-12-18_09-35-54](https://github.com/user-attachments/assets/3ee13051-1fd4-48e8-b485-7d5b7f1eb080)
+    print(f"График сохранен {filename}")
+
 
 
