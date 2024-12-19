@@ -276,6 +276,11 @@ def main():
 
     plt.savefig(filename)  # сохранение созданной фигуры, в файл с именем «filename.png».
     print(f"График сохранен {filename}")
+![2024-12-19_10-48-02](https://github.com/user-attachments/assets/be884b72-e12c-44ac-b57e-ad50d63a5fe2)
+![2024-12-19_10-48-46](https://github.com/user-attachments/assets/cde71cba-72b0-43b2-ae57-723a5cd22fcc)
+![2024-12-19_10-49-13](https://github.com/user-attachments/assets/12967f26-eaa4-4ecb-89f1-0568413a5eef)
+![2024-12-19_10-49-39](https://github.com/user-attachments/assets/cd949e15-0374-4f14-9deb-ff843f28c119)
+![2024-12-19_10-50-22](https://github.com/user-attachments/assets/cb7e2700-144b-463f-a9ce-6820e8c64117)
 
 
 
