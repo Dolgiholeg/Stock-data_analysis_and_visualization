@@ -197,7 +197,7 @@ def main():
     data['Signal'] = signal
     return data
 
-файл data_download.pu
+файл data_plotting.pu
 
     import matplotlib.pyplot as plt  # импортируем модуль pyplot из библиотеки Matplotlib под псевдонимом plt
     import pandas as pd
