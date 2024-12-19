@@ -17,10 +17,14 @@ def main():
           " '6mo'(6 месяцев), '1y'(1 год), '2y'(2 года), '5y'(5 лет), '10y'(10 лет), 'ytd'(с начала года), "
           " 'max'(максимум): ")
 
-    period = input("ВВЕДИТЕ ПЕРИОД АНАЛИЗА ДАННЫХ:»")
-
     # Получение данных о запасах, функция fetch_stock_data файл data_download
-    stock_data = dd.fetch_stock_data(ticker, period)
+    period = input("введите период или пропустить(ENTER) для ввода конкретных дат:»")
+    if not period:
+        start_date = input("Введите дату начала анализа в формате 'ГГГГ-ММ-ДД' (например, '2022-01-01'): ")
+        end_date = input("Введите дату окончания анализа в формате 'ГГГГ-ММ-ДД' (например, '2022-12-31'): ")
+        stock_data = dd.fetch_stock_data(ticker, start_date=start_date, end_date=end_date)
+    else:
+        stock_data = dd.fetch_stock_data(ticker, period=period)
 
     # Добавление скользящего среднего значение к данным, функция add_moving_average файл data_download
     stock_data = dd.add_moving_average(stock_data)

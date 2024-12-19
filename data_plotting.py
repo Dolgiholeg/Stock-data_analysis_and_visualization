@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt  # импортируем модуль pyplot из библиотеки Matplotlib под псевдонимом plt
 import pandas as pd
+import matplotlib.dates as mdates  # импорт модуля для работы с датами в библиотеке Matplotlib
 
 
 def create_and_save_plot(data, ticker, period, filename=None):
@@ -8,7 +9,8 @@ def create_and_save_plot(data, ticker, period, filename=None):
     Получает - data: DataFrame с историческими данными; ticker: Символ акции; period: Период данных; filename: Имя файла
     для сохранения графика.
     """
-    plt.figure(figsize=(20, 15))  # устанавливаем размер фигуры в дюймах
+    plt.figure(figsize=(20, 12))  # устанавливаем размер фигуры в дюймах
+
     # График цены и скользящего среднего
     plt.subplot(4, 1, 1)  # создаём график с четырьмя строками, одним столбцом и первым индексом
     if 'Date' not in data:
@@ -29,10 +31,12 @@ def create_and_save_plot(data, ticker, period, filename=None):
         plt.plot(data['Date'], data['Close'], label='Цена закрытия')
         plt.plot(data['Date'], data['Moving_Average'], label='Скользящая средняя')
 
+    plt.gca().xaxis.set_major_formatter(mdates.DateFormatter("%d.%m.%y"))  # меняем формат даты по оси Х на ДД.ММ.ГГ
     plt.title(f"{ticker} Цена акций с течением времени")  # назначаем название графика
     plt.xlabel("Дата")  # ось X на графике будет обозначать дату
     plt.ylabel("Цена")  # ось Y на графике будет обозначать цену
     plt.legend()  # добавляем легенду в график
+    plt.subplots_adjust(hspace=0.5)  # делаем отступ от графика
 
     # График RSI
     plt.subplot(4, 1, 2)  # создаём график с четырьмя строками, одним столбцом и вторым индексом
@@ -42,10 +46,12 @@ def create_and_save_plot(data, ticker, period, filename=None):
         # линии на высоте y=70 - "Покупай"
         plt.axhline(y=30, color='g', linestyle='--', label='Продавай')  # добавление зелёной пунктирной горизонтальной
         # линии на высоте y=30 - "Продавай"
+        plt.gca().xaxis.set_major_formatter(mdates.DateFormatter("%d.%m.%y"))
         plt.title('Индекс относительной силы (RSI)')
         plt.xlabel("Дата")
         plt.ylabel("RSI")
         plt.legend()
+        plt.subplots_adjust(hspace=0.5)
     else:
         print("Столбец 'RSI' отсутствует в данных.")
 
@@ -55,6 +61,7 @@ def create_and_save_plot(data, ticker, period, filename=None):
         plt.plot(data.index, data['MACD'], label='MACD')  # визуализация графика индикатора схождения-расхождения
         # скользящих средних (MACD)
         plt.plot(data.index, data['Signal'], label='Signal')  # визуализация графика сигнальной линии(Signal)
+        plt.gca().xaxis.set_major_formatter(mdates.DateFormatter("%d.%m.%y"))
         plt.title('Конвергенция - Дивергенция скользящей средней (MACD)')
         plt.xlabel("Дата")
         plt.ylabel("MACD")
