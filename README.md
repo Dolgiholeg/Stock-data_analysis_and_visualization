@@ -1,4 +1,4 @@
-Задача №5. Реализовать функционал: Улучшенное управление временными периодами
+Задача №6. Реализовать функционал: Добавление параметра для выбора стиля графика
 
     import data_download as dd  # импорт из файла data_download результатов работы функций
     import data_plotting as dplt  # импорт из файла data_plotting результатов работы функций
@@ -50,8 +50,19 @@ def main():
     stock_data = dd.calculate_rsi(stock_data, window=14)
     stock_data = dd.calculate_macd(stock_data, fast_window=12, slow_window=26, signal_window=9)
 
-    # Построим график данных
-    dplt.create_and_save_plot(stock_data, ticker, period)
+    # Построим график данных акций
+    # Функции create_and_save_plot файл data_plotting
+    # Пользователь назначает стиль оформление графика
+    style = input("введите пропустить(ENTER) для создания графика в стиле classic(по умолчанию)"
+                  "или скопируйте или введите вручную названия стиля графика: \n"
+                  "default - (белый лист, белый фон графика, сетки нет, чёрные буквы и цифры одинаковых размеров);\n"
+                  "Solarize_Light2 - (кремовый лист, серый фон графика, белая сетка, серый буквы и цифры графика, "
+                  "чёрные буквы названий) ;\n"
+                  "bmh - (белый лист, серый фон графика, серая сетка, чёрные буквы и цифры разных размеров);\n"
+                  "dark_background - (чёрный лист, фон графика чёрный, сетки нет, а цвет тиков — белый.):»\n")
+    if not style:
+        style = 'classic'
+    dplt.create_and_save_plot(stock_data, ticker, period, style=style)
 
 
     # Запуск процесса
@@ -62,11 +73,13 @@ def main():
 
     import yfinance as yf  # импорт библиотеки yfinance с использованием псевдонима yf - предоставляет доступ к финансовым
     # данным из Yahoo Finance.
+    """test
     import pandas as pd  # импорт библиотеки Pandas - мощный инструмент для анализа и обработки табличных данных
-    # (pd- общепринятое сокращение для Pandas в коде)
-    from tabulate import tabulate  # импорт библиотеки tabulate - красивое оформление таблицы
-    
-    
+    (pd- общепринятое сокращение для Pandas в коде)
+    from tabulate import tabulate  # test - импорт библиотеки tabulate - красивое оформление таблицы
+    """
+
+
     def fetch_stock_data(ticker, period=None, start_date=None, end_date=None):
     """Получает исторические данные об акциях для указанного тикера и временного периода. Возвращает DataFrame с данными.
     Тикер — это краткое название в биржевой информации котируемых инструментов (акций, облигаций, индексов).
@@ -137,12 +150,14 @@ def main():
     Получает DataFrame с данными за указанный период и дополнительным столбцом Moving_Average и название CSV файла
     """
     data.to_csv('dataframe.csv')  # преобразуем полученную DataFrame в CSV файл(функция to_csv) с названием dataframe
+    """test
     df = pd.read_csv('dataframe.csv')  # читаем CSV файл(функция read_csv) с названием dataframe
     headers = ['№', 'Date', 'Open', 'High', 'Low', 'Close', 'Volume', 'Dividends', 'Stock Splits', 'Moving_Average']
     # назначаем название столбцов
     print('************************ПОЛУЧЕННЫЕ ДАННЫЕ ОБ АКЦИЯХ************************')
     print(tabulate(df, headers=headers, tablefmt='grid', stralign='center'))  # выводим в консоль,
     # сохранённую DataFrame из CSV файл с названием dataframe
+    """
 
 
     def calculate_rsi(data, window=14):
@@ -170,9 +185,9 @@ def main():
 
     # Рассчитываем RSI
     rsi = 100 - (100 / (1 + rs))
-
     # Добавляем рассчитанные значения RSI в качестве нового столбца в наборе данных
     data['RSI'] = rsi
+    # print(data)  # test
     return data
 
 
@@ -195,21 +210,24 @@ def main():
     # Добавляем рассчитанные значения MACD и Signal(сигнальная линия) в качестве новых столбцов в наборе данных
     data['MACD'] = macd
     data['Signal'] = signal
+    # print(data)  # test
     return data
+
 
 файл data_plotting.pu
 
     import matplotlib.pyplot as plt  # импортируем модуль pyplot из библиотеки Matplotlib под псевдонимом plt
     import pandas as pd
     import matplotlib.dates as mdates  # импорт модуля для работы с датами в библиотеке Matplotlib
-
-
-    def create_and_save_plot(data, ticker, period, filename=None):
-        """
+    
+    
+    def create_and_save_plot(data, ticker, period, filename=None, style='style'):
+    """
     Создает и сохраняет график цены акций, скользящего среднего, RSI, MACD и стандартного отклонения.
     Получает - data: DataFrame с историческими данными; ticker: Символ акции; period: Период данных; filename: Имя файла
     для сохранения графика.
     """
+    plt.style.use(style)
     plt.figure(figsize=(20, 12))  # устанавливаем размер фигуры в дюймах
 
     # График цены и скользящего среднего
@@ -276,11 +294,8 @@ def main():
 
     plt.savefig(filename)  # сохранение созданной фигуры, в файл с именем «filename.png».
     print(f"График сохранен {filename}")
-![2024-12-19_10-48-02](https://github.com/user-attachments/assets/be884b72-e12c-44ac-b57e-ad50d63a5fe2)
-![2024-12-19_10-48-46](https://github.com/user-attachments/assets/cde71cba-72b0-43b2-ae57-723a5cd22fcc)
-![2024-12-19_10-49-13](https://github.com/user-attachments/assets/12967f26-eaa4-4ecb-89f1-0568413a5eef)
-![2024-12-19_10-49-39](https://github.com/user-attachments/assets/cd949e15-0374-4f14-9deb-ff843f28c119)
-![2024-12-19_10-50-22](https://github.com/user-attachments/assets/cb7e2700-144b-463f-a9ce-6820e8c64117)
+![2024-12-20_16-55-24](https://github.com/user-attachments/assets/8d9b4152-6709-4403-a391-8aff787c8f50)
+![2024-12-20_16-56-14](https://github.com/user-attachments/assets/c57cb687-cf57-4d5d-aee1-4500c4b10f4c)
 
 
 
