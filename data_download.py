@@ -1,8 +1,10 @@
 import yfinance as yf  # импорт библиотеки yfinance с использованием псевдонима yf - предоставляет доступ к финансовым
 # данным из Yahoo Finance.
+"""test
 import pandas as pd  # импорт библиотеки Pandas - мощный инструмент для анализа и обработки табличных данных
-# (pd- общепринятое сокращение для Pandas в коде)
-from tabulate import tabulate  # импорт библиотеки tabulate - красивое оформление таблицы
+(pd- общепринятое сокращение для Pandas в коде)
+from tabulate import tabulate  # test - импорт библиотеки tabulate - красивое оформление таблицы
+"""
 
 
 def fetch_stock_data(ticker, period=None, start_date=None, end_date=None):
@@ -75,12 +77,14 @@ def export_data_to_csv(data, filename):
     Получает DataFrame с данными за указанный период и дополнительным столбцом Moving_Average и название CSV файла
     """
     data.to_csv('dataframe.csv')  # преобразуем полученную DataFrame в CSV файл(функция to_csv) с названием dataframe
+    """test
     df = pd.read_csv('dataframe.csv')  # читаем CSV файл(функция read_csv) с названием dataframe
     headers = ['№', 'Date', 'Open', 'High', 'Low', 'Close', 'Volume', 'Dividends', 'Stock Splits', 'Moving_Average']
     # назначаем название столбцов
     print('************************ПОЛУЧЕННЫЕ ДАННЫЕ ОБ АКЦИЯХ************************')
     print(tabulate(df, headers=headers, tablefmt='grid', stralign='center'))  # выводим в консоль,
     # сохранённую DataFrame из CSV файл с названием dataframe
+    """
 
 
 def calculate_rsi(data, window=14):
@@ -110,7 +114,7 @@ def calculate_rsi(data, window=14):
     rsi = 100 - (100 / (1 + rs))
     # Добавляем рассчитанные значения RSI в качестве нового столбца в наборе данных
     data['RSI'] = rsi
-    print(data)
+    # print(data)  # test
     return data
 
 
@@ -133,5 +137,5 @@ def calculate_macd(data, fast_window=12, slow_window=26, signal_window=9):
     # Добавляем рассчитанные значения MACD и Signal(сигнальная линия) в качестве новых столбцов в наборе данных
     data['MACD'] = macd
     data['Signal'] = signal
-    print(data)
+    # print(data)  # test
     return data

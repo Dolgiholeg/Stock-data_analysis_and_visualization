@@ -3,14 +3,14 @@ import pandas as pd
 import matplotlib.dates as mdates  # импорт модуля для работы с датами в библиотеке Matplotlib
 
 
-def create_and_save_plot(data, ticker, period, filename=None):
+def create_and_save_plot(data, ticker, period, filename=None, style='style'):
     """
     Создает и сохраняет график цены акций, скользящего среднего, RSI, MACD и стандартного отклонения.
     Получает - data: DataFrame с историческими данными; ticker: Символ акции; period: Период данных; filename: Имя файла
     для сохранения графика.
     """
+    plt.style.use(style)
     plt.figure(figsize=(20, 12))  # устанавливаем размер фигуры в дюймах
-
     # График цены и скользящего среднего
     plt.subplot(4, 1, 1)  # создаём график с четырьмя строками, одним столбцом и первым индексом
     if 'Date' not in data:

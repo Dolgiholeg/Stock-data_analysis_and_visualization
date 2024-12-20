@@ -49,7 +49,18 @@ def main():
     stock_data = dd.calculate_macd(stock_data, fast_window=12, slow_window=26, signal_window=9)
 
     # Построим график данных акций
-    dplt.create_and_save_plot(stock_data, ticker, period)
+    # Функции create_and_save_plot файл data_plotting
+    # Пользователь назначает стиль оформление графика
+    style = input("введите пропустить(ENTER) для создания графика в стиле classic(по умолчанию)"
+                  "или скопируйте или введите вручную названия стиля графика: \n"
+                  "default - (белый лист, белый фон графика, сетки нет, чёрные буквы и цифры одинаковых размеров);\n"
+                  "Solarize_Light2 - (кремовый лист, серый фон графика, белая сетка, серый буквы и цифры графика, "
+                  "чёрные буквы названий) ;\n"
+                  "bmh - (белый лист, серый фон графика, серая сетка, чёрные буквы и цифры разных размеров);\n"
+                  "dark_background - (чёрный лист, фон графика чёрный, сетки нет, а цвет тиков — белый.):»\n")
+    if not style:
+        style = 'classic'
+    dplt.create_and_save_plot(stock_data, ticker, period, style=style)
 
 
 # Запуск процесса
