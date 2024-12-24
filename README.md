@@ -1,8 +1,7 @@
-Задача №6. Реализовать функционал: Добавление параметра для выбора стиля графика
+Задача №7. Расширенный анализ данных
 
     import data_download as dd  # импорт из файла data_download результатов работы функций
     import data_plotting as dplt  # импорт из файла data_plotting результатов работы функций
-
 
 def main():
     """ Основная функция, управляющая процессом загрузки, обработки данных и их визуализации. Запрашивает
@@ -45,10 +44,14 @@ def main():
     filename = 'dataframe'
     dd.export_data_to_csv(stock_data, filename)
 
-    # Вычисление технических индексов RSI и MACD
+    # Добавление технических индексов RSI и MACD
     # Функции calculate_rsi и calculate_macd файл data_download
     stock_data = dd.calculate_rsi(stock_data, window=14)
     stock_data = dd.calculate_macd(stock_data, fast_window=12, slow_window=26, signal_window=9)
+
+    # добавление статистического показателя - стандартное отклонение цены акции
+    # Функции calculate_std_dev файл data_download
+    stock_data = dd.calculate_std_dev(stock_data)
 
     # Построим график данных акций
     # Функции create_and_save_plot файл data_plotting
@@ -67,7 +70,7 @@ def main():
 
     # Запуск процесса
     if __name__ == "__main__":
-    main()
+        main()
 
 файл data_download.pu
 
@@ -213,6 +216,26 @@ def main():
     # print(data)  # test
     return data
 
+    def calculate_std_dev(data):
+    """Вычисляет статистический показатель - стандартное отклонение цены акции - этот показатель количественно определяет
+    разброс цен активов относительно их среднего значения и дает представление об изменчивости и потенциальном риске,
+    связанном с финансовым инструментом. Более высокое стандартное отклонение указывает на большую изменчивость цен и
+    более значительные колебания, а более низкое значение указывает на меньшие колебания цен.
+    Принимает DataFrame с данными за указанный период и дополнительным столбцом Moving_Average.
+    #test
+    list_prices_close = data['Close'].tolist() # сбор данных о ценах закрытия акции за указанный период(в список)
+    n = len(list_prices_close) # сохраняем длину списка в переменную п
+    average = sum(list_prices_close) / n # сохраняем среднее значение полученных данных в переменную average
+    var = sum((i-average)**2 for i in list_prices_close) / (n - 1) # определяем и сохраняем дисперсию цен в переменную
+    var(сумма всех значений квадратов отклонений(разница значения каждой цены закрытия и среднего значения разделённое
+    на количество цен минус одна (эта корректировка, известная как поправка Бесселя, используется для выборки))
+    std_dev = var ** 0.5 # определяем стандартное отклонение цены акции(корень квадратный из дисперсии цен)
+    data['Standard Deviation'] = std_dev
+    """
+    data['std_deviation'] = data['Close'].std()  # определяем стандартное отклонение цены акции(std_dev) с помощью функции
+    # pandas - DataFrame.std() и сохраняем данные в DataFrame
+    # print(data.to_string()) # test - выводим в консоль DataFrame со всеми столбцами
+    return data
 
 файл data_plotting.pu
 
@@ -224,21 +247,24 @@ def main():
     def create_and_save_plot(data, ticker, period, filename=None, style='style'):
     """
     Создает и сохраняет график цены акций, скользящего среднего, RSI, MACD и стандартного отклонения.
-    Получает - data: DataFrame с историческими данными; ticker: Символ акции; period: Период данных; filename: Имя файла
-    для сохранения графика.
+    Получает - data: DataFrame с историческими данными и дополнительным столбцом Moving_Average; ticker: Символ акции;
+    period: Период данных; filename: Имя файла для сохранения графика; стиль графика - не определён.
     """
-    plt.style.use(style)
-    plt.figure(figsize=(20, 12))  # устанавливаем размер фигуры в дюймах
 
+    plt.style.use(style)  # назначаем стиль оформления графика, указанный пользователем
+    plt.figure(figsize=(20, 12))  # устанавливаем размер фигуры в дюймах
     # График цены и скользящего среднего
     plt.subplot(4, 1, 1)  # создаём график с четырьмя строками, одним столбцом и первым индексом
     if 'Date' not in data:
         if pd.api.types.is_datetime64_any_dtype(data.index):  # проверяем, является ли индекс данных типом datetime64
             dates = data.index.to_numpy()  # преобразуем индекс данных в массив NumPy
-            plt.plot(dates, data['Close'].values, label='Цена закрытия')  # создаём график с ценами закрытия по
+            plt.plot(dates, data['Close'].values, alpha=1, label='Цена закрытия')  # создаём график с ценами закрытия по
             # полученным датам
-            plt.plot(dates, data['Moving_Average'].values, label='Скользящая средняя')  # создаём график
+            plt.plot(dates, data['Moving_Average'].values, alpha=1, label='Скользящая средняя')  # создаём график
             # временного ряда со скользящим средним
+            plt.plot(dates, data['Close'] - data['std_deviation'], data['Close'] + data['std_deviation'], color='c', alpha=0.5,
+                     label='Стандартное отклонение')  # создаём график стандартного отклонения
+
         else:
             print("Информация о дате отсутствует или не имеет распознаваемого формата.")
             return
@@ -247,8 +273,10 @@ def main():
             # не являются типом данных datetime64
             data['Date'] = pd.to_datetime(data['Date'])  # столбец «Дата» в фрейме данных преобразуется в
             # формат datetime
-        plt.plot(data['Date'], data['Close'], label='Цена закрытия')
-        plt.plot(data['Date'], data['Moving_Average'], label='Скользящая средняя')
+        plt.plot(data['Date'], data['Close'], alpha=1, label='Цена закрытия')
+        plt.plot(data['Date'], data['Moving_Average'], alpha=1, label='Скользящая средняя')
+        plt.plot(data['Date'], data['Close'] - data['std_deviation'], data['Close'] + data['std_deviation'], color='c', alpha=0.5,
+                 label='Стандартное отклонение')
 
     plt.gca().xaxis.set_major_formatter(mdates.DateFormatter("%d.%m.%y"))  # меняем формат даты по оси Х на ДД.ММ.ГГ
     plt.title(f"{ticker} Цена акций с течением времени")  # назначаем название графика
@@ -294,8 +322,10 @@ def main():
 
     plt.savefig(filename)  # сохранение созданной фигуры, в файл с именем «filename.png».
     print(f"График сохранен {filename}")
-![2024-12-20_16-55-24](https://github.com/user-attachments/assets/8d9b4152-6709-4403-a391-8aff787c8f50)
-![2024-12-20_16-56-14](https://github.com/user-attachments/assets/c57cb687-cf57-4d5d-aee1-4500c4b10f4c)
+    ![2024-12-24_10-22-20](https://github.com/user-attachments/assets/881a339e-d66c-4a55-8359-7f22a30824fe)
+    ![2024-12-24_10-22-48](https://github.com/user-attachments/assets/908b7277-653f-46d6-b893-b7bf4d865532)
+    ![2024-12-24_10-21-48](https://github.com/user-attachments/assets/8bab6df5-7471-4017-af44-26946244c5db)
+
 
 
 
