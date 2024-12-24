@@ -322,9 +322,10 @@ def main():
 
     plt.savefig(filename)  # сохранение созданной фигуры, в файл с именем «filename.png».
     print(f"График сохранен {filename}")
-    ![2024-12-24_10-22-20](https://github.com/user-attachments/assets/881a339e-d66c-4a55-8359-7f22a30824fe)
-    ![2024-12-24_10-22-48](https://github.com/user-attachments/assets/908b7277-653f-46d6-b893-b7bf4d865532)
-    ![2024-12-24_10-21-48](https://github.com/user-attachments/assets/8bab6df5-7471-4017-af44-26946244c5db)
+    
+![2024-12-24_10-22-20](https://github.com/user-attachments/assets/881a339e-d66c-4a55-8359-7f22a30824fe)
+![2024-12-24_10-22-48](https://github.com/user-attachments/assets/908b7277-653f-46d6-b893-b7bf4d865532)
+![2024-12-24_10-21-48](https://github.com/user-attachments/assets/8bab6df5-7471-4017-af44-26946244c5db)
 
 
 
