@@ -6,20 +6,23 @@ import matplotlib.dates as mdates  # импорт модуля для работ
 def create_and_save_plot(data, ticker, period, filename=None, style='style'):
     """
     Создает и сохраняет график цены акций, скользящего среднего, RSI, MACD и стандартного отклонения.
-    Получает - data: DataFrame с историческими данными; ticker: Символ акции; period: Период данных; filename: Имя файла
-    для сохранения графика.
+    Получает - data: DataFrame с историческими данными и дополнительным столбцом Moving_Average; ticker: Символ акции;
+    period: Период данных; filename: Имя файла для сохранения графика; стиль графика - не определён.
     """
-    plt.style.use(style)
+    plt.style.use(style)  # назначаем стиль оформления графика, указанный пользователем
     plt.figure(figsize=(20, 12))  # устанавливаем размер фигуры в дюймах
     # График цены и скользящего среднего
     plt.subplot(4, 1, 1)  # создаём график с четырьмя строками, одним столбцом и первым индексом
     if 'Date' not in data:
         if pd.api.types.is_datetime64_any_dtype(data.index):  # проверяем, является ли индекс данных типом datetime64
             dates = data.index.to_numpy()  # преобразуем индекс данных в массив NumPy
-            plt.plot(dates, data['Close'].values, label='Цена закрытия')  # создаём график с ценами закрытия по
+            plt.plot(dates, data['Close'].values, alpha=1, label='Цена закрытия')  # создаём график с ценами закрытия по
             # полученным датам
-            plt.plot(dates, data['Moving_Average'].values, label='Скользящая средняя')  # создаём график
+            plt.plot(dates, data['Moving_Average'].values, alpha=1, label='Скользящая средняя')  # создаём график
             # временного ряда со скользящим средним
+            plt.plot(dates, data['Close'] - data['std_deviation'], data['Close'] + data['std_deviation'], color='c', alpha=0.5,
+                     label='Стандартное отклонение')  # создаём график стандартного отклонения
+
         else:
             print("Информация о дате отсутствует или не имеет распознаваемого формата.")
             return
@@ -28,8 +31,10 @@ def create_and_save_plot(data, ticker, period, filename=None, style='style'):
             # не являются типом данных datetime64
             data['Date'] = pd.to_datetime(data['Date'])  # столбец «Дата» в фрейме данных преобразуется в
             # формат datetime
-        plt.plot(data['Date'], data['Close'], label='Цена закрытия')
-        plt.plot(data['Date'], data['Moving_Average'], label='Скользящая средняя')
+        plt.plot(data['Date'], data['Close'], alpha=1, label='Цена закрытия')
+        plt.plot(data['Date'], data['Moving_Average'], alpha=1, label='Скользящая средняя')
+        plt.plot(data['Date'], data['Close'] - data['std_deviation'], data['Close'] + data['std_deviation'], color='c', alpha=0.5,
+                 label='Стандартное отклонение')
 
     plt.gca().xaxis.set_major_formatter(mdates.DateFormatter("%d.%m.%y"))  # меняем формат даты по оси Х на ДД.ММ.ГГ
     plt.title(f"{ticker} Цена акций с течением времени")  # назначаем название графика
