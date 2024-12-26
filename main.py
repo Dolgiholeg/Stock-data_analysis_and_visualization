@@ -65,6 +65,7 @@ def main():
     if not style:
         style = 'classic'
     dplt.create_and_save_plot(stock_data, ticker, period, style=style)
+    dplt.create_interactive_graphs(stock_data, ticker, period)
 
 
 # Запуск процесса

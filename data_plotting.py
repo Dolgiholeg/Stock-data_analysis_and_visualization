@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt  # импортируем модуль pyplot из библиотеки Matplotlib под псевдонимом plt
 import pandas as pd
 import matplotlib.dates as mdates  # импорт модуля для работы с датами в библиотеке Matplotlib
+from bokeh.plotting import figure, show, output_file  # импорт функций библиотеки Bokeh
 
 
 def create_and_save_plot(data, ticker, period, filename=None, style='style'):
@@ -82,10 +83,39 @@ def create_and_save_plot(data, ticker, period, filename=None, style='style'):
     print(f"График сохранен {filename}")
 
 
-
-
-
-
-
-
+def create_interactive_graphs(data, ticker, period=None):
+    average_price = data['Close'].mean(axis=0)  # Вычисляем среднее значение строк столбца Close
+    # Добавление сюжета
+    p = figure(width=1800, height=900, title=f'{ticker} Цена акций с течением времени', x_axis_type='datetime',
+               x_axis_label='Дата', y_axis_label='Цена')
+    x = []
+    y = []
+    # Данные для графика
+    if 'Date' not in data:
+        if pd.api.types.is_datetime64_any_dtype(data.index):  # проверяем, является ли индекс данных типом datetime64
+            dates = data.index.to_numpy()  # преобразуем индекс данных в массив NumPy
+            x = dates
+            y = data['Close'].tolist()
+        else:
+            print("Информация о дате отсутствует или не имеет распознаваемого формата.")
+            return
+    else:
+        if not pd.api.types.is_datetime64_any_dtype(data['Date']):  # если данные столбца «Дата» в фрейме данных
+            # не являются типом данных datetime64
+            dates = pd.to_datetime(data['Date'])  # столбец «Дата» в фрейме данных преобразуется в
+            # формат datetime
+            x = dates
+            y = data['Close'].tolist()
+    # Добавление линии на график
+    p.line(x, y, legend_label="Цена закрытия", line_width=1.5)
+    p.circle(x, y, fill_color='white', size=5)
+    p.title.text_font_size = '25px'
+    p.title.text_font = "arial"
+    p.title.align = "center"
+    # Определение выходного файла
+    output_file('index.html')
+    print(f'СРЕДНЯЯ ЦЕНА ЗАКРЫТИЯ АКЦИЙ ЗА ЗАДАННЫЙ ПЕРИОД:":  {average_price}\n')
+    print(f"Создан интерактивный график {ticker} - цена акций с течением времени")
+    # Отображение результатов
+    show(p)
 
