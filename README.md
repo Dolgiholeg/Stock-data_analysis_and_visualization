@@ -1,4 +1,4 @@
-Задача №7. Расширенный анализ данных
+Задача №8. Интерактивный график
 
     import data_download as dd  # импорт из файла data_download результатов работы функций
     import data_plotting as dplt  # импорт из файла data_plotting результатов работы функций
@@ -66,7 +66,7 @@ def main():
     if not style:
         style = 'classic'
     dplt.create_and_save_plot(stock_data, ticker, period, style=style)
-
+    dplt.create_interactive_graphs(stock_data, ticker, period)
 
     # Запуск процесса
     if __name__ == "__main__":
@@ -242,6 +242,7 @@ def main():
     import matplotlib.pyplot as plt  # импортируем модуль pyplot из библиотеки Matplotlib под псевдонимом plt
     import pandas as pd
     import matplotlib.dates as mdates  # импорт модуля для работы с датами в библиотеке Matplotlib
+    from bokeh.plotting import figure, show, output_file  # импорт функций библиотеки Bokeh
     
     
     def create_and_save_plot(data, ticker, period, filename=None, style='style'):
@@ -250,7 +251,6 @@ def main():
     Получает - data: DataFrame с историческими данными и дополнительным столбцом Moving_Average; ticker: Символ акции;
     period: Период данных; filename: Имя файла для сохранения графика; стиль графика - не определён.
     """
-
     plt.style.use(style)  # назначаем стиль оформления графика, указанный пользователем
     plt.figure(figsize=(20, 12))  # устанавливаем размер фигуры в дюймах
     # График цены и скользящего среднего
@@ -322,10 +322,46 @@ def main():
 
     plt.savefig(filename)  # сохранение созданной фигуры, в файл с именем «filename.png».
     print(f"График сохранен {filename}")
-    
-![2024-12-24_10-22-20](https://github.com/user-attachments/assets/881a339e-d66c-4a55-8359-7f22a30824fe)
-![2024-12-24_10-22-48](https://github.com/user-attachments/assets/908b7277-653f-46d6-b893-b7bf4d865532)
-![2024-12-24_10-21-48](https://github.com/user-attachments/assets/8bab6df5-7471-4017-af44-26946244c5db)
+
+
+    def create_interactive_graphs(data, ticker, period=None):
+    average_price = data['Close'].mean(axis=0)  # Вычисляем среднее значение строк столбца Close
+    # Добавление сюжета
+    p = figure(width=1800, height=900, title=f'{ticker} Цена акций с течением времени', x_axis_type='datetime',
+               x_axis_label='Дата', y_axis_label='Цена')
+    x = []
+    y = []
+    # Данные для графика
+    if 'Date' not in data:
+        if pd.api.types.is_datetime64_any_dtype(data.index):  # проверяем, является ли индекс данных типом datetime64
+            dates = data.index.to_numpy()  # преобразуем индекс данных в массив NumPy
+            x = dates
+            y = data['Close'].tolist()
+        else:
+            print("Информация о дате отсутствует или не имеет распознаваемого формата.")
+            return
+    else:
+        if not pd.api.types.is_datetime64_any_dtype(data['Date']):  # если данные столбца «Дата» в фрейме данных
+            # не являются типом данных datetime64
+            dates = pd.to_datetime(data['Date'])  # столбец «Дата» в фрейме данных преобразуется в
+            # формат datetime
+            x = dates
+            y = data['Close'].tolist()
+    # Добавление линии на график
+    p.line(x, y, legend_label="Цена закрытия", line_width=1.5)
+    p.circle(x, y, fill_color='white', size=5)
+    p.title.text_font_size = '25px'
+    p.title.text_font = "arial"
+    p.title.align = "center"
+    # Определение выходного файла
+    output_file('index.html')
+    print(f'СРЕДНЯЯ ЦЕНА ЗАКРЫТИЯ АКЦИЙ ЗА ЗАДАННЫЙ ПЕРИОД:":  {average_price}\n')
+    print(f"Создан интерактивный график {ticker} - цена акций с течением времени")
+    # Отображение результатов
+    show(p)
+![2024-12-26_10-59-27](https://github.com/user-attachments/assets/f85a1614-8522-411f-bda1-bd9ad15e6814)
+![2024-12-26_11-00-31](https://github.com/user-attachments/assets/b7998dbb-16a4-42fe-8afe-60686304aadf)
+![2024-12-26_10-58-22](https://github.com/user-attachments/assets/d5a62acc-8c31-46b5-842f-394035eb8642)
 
 
 
