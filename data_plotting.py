@@ -21,9 +21,9 @@ def create_and_save_plot(data, ticker, period, filename=None, style='style'):
             # полученным датам
             plt.plot(dates, data['Moving_Average'].values, alpha=1, label='Скользящая средняя')  # создаём график
             # временного ряда со скользящим средним
-            plt.plot(dates, data['Close'] - data['std_deviation'], data['Close'] + data['std_deviation'], color='c', alpha=0.5,
-                     label='Стандартное отклонение')  # создаём график стандартного отклонения
-
+            plt.plot(dates, data['Moving_Average'] - 2 * data['std_deviation'], data['Moving_Average'] +
+                     2 * data['std_deviation'], color='c', alpha=0.5, label='Стандартное отклонение')
+            # создаём полосы Боллинджера (график стандартного отклонения)
         else:
             print("Информация о дате отсутствует или не имеет распознаваемого формата.")
             return
@@ -34,8 +34,8 @@ def create_and_save_plot(data, ticker, period, filename=None, style='style'):
             # формат datetime
         plt.plot(data['Date'], data['Close'], alpha=1, label='Цена закрытия')
         plt.plot(data['Date'], data['Moving_Average'], alpha=1, label='Скользящая средняя')
-        plt.plot(data['Date'], data['Close'] - data['std_deviation'], data['Close'] + data['std_deviation'], color='c', alpha=0.5,
-                 label='Стандартное отклонение')
+        plt.plot(data['Date'], data['Moving_Average'] - 2 * data['std_deviation'], data['Moving_Average'] +
+                 2 * data['std_deviation'], color='c', alpha=0.5, label='Стандартное отклонение')
 
     plt.gca().xaxis.set_major_formatter(mdates.DateFormatter("%d.%m.%y"))  # меняем формат даты по оси Х на ДД.ММ.ГГ
     plt.title(f"{ticker} Цена акций с течением времени")  # назначаем название графика
