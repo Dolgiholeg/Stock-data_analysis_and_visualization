@@ -1,9 +1,9 @@
-Задача №8. Интерактивный график
+# Анализ и визуализации данных об акциях
 
     import data_download as dd  # импорт из файла data_download результатов работы функций
     import data_plotting as dplt  # импорт из файла data_plotting результатов работы функций
 
-def main():
+## def main():
     """ Основная функция, управляющая процессом загрузки, обработки данных и их визуализации. Запрашивает
      у пользователя ввод данных, вызывает функции загрузки и обработки данных, а затем передаёт результаты
       на визуализацию.
@@ -72,7 +72,7 @@ def main():
     if __name__ == "__main__":
         main()
 
-файл data_download.pu
+## файл data_download.pu
 
     import yfinance as yf  # импорт библиотеки yfinance с использованием псевдонима yf - предоставляет доступ к финансовым
     # данным из Yahoo Finance.
@@ -237,7 +237,7 @@ def main():
     # print(data.to_string()) # test - выводим в консоль DataFrame со всеми столбцами
     return data
 
-файл data_plotting.pu
+## файл data_plotting.pu
 
     import matplotlib.pyplot as plt  # импортируем модуль pyplot из библиотеки Matplotlib под псевдонимом plt
     import pandas as pd
@@ -262,9 +262,9 @@ def main():
             # полученным датам
             plt.plot(dates, data['Moving_Average'].values, alpha=1, label='Скользящая средняя')  # создаём график
             # временного ряда со скользящим средним
-            plt.plot(dates, data['Close'] - data['std_deviation'], data['Close'] + data['std_deviation'], color='c', alpha=0.5,
-                     label='Стандартное отклонение')  # создаём график стандартного отклонения
-
+            plt.plot(dates, data['Moving_Average'] - 2 * data['std_deviation'], data['Moving_Average'] +
+                     2 * data['std_deviation'], color='c', alpha=0.5, label='Стандартное отклонение')
+            # создаём полосы Боллинджера (график стандартного отклонения)
         else:
             print("Информация о дате отсутствует или не имеет распознаваемого формата.")
             return
@@ -275,8 +275,8 @@ def main():
             # формат datetime
         plt.plot(data['Date'], data['Close'], alpha=1, label='Цена закрытия')
         plt.plot(data['Date'], data['Moving_Average'], alpha=1, label='Скользящая средняя')
-        plt.plot(data['Date'], data['Close'] - data['std_deviation'], data['Close'] + data['std_deviation'], color='c', alpha=0.5,
-                 label='Стандартное отклонение')
+        plt.plot(data['Date'], data['Moving_Average'] - 2 * data['std_deviation'], data['Moving_Average'] +
+                 2 * data['std_deviation'], color='c', alpha=0.5, label='Стандартное отклонение')
 
     plt.gca().xaxis.set_major_formatter(mdates.DateFormatter("%d.%m.%y"))  # меняем формат даты по оси Х на ДД.ММ.ГГ
     plt.title(f"{ticker} Цена акций с течением времени")  # назначаем название графика
@@ -362,6 +362,7 @@ def main():
 ![2024-12-26_10-59-27](https://github.com/user-attachments/assets/f85a1614-8522-411f-bda1-bd9ad15e6814)
 ![2024-12-26_11-00-31](https://github.com/user-attachments/assets/b7998dbb-16a4-42fe-8afe-60686304aadf)
 ![2024-12-26_10-58-22](https://github.com/user-attachments/assets/d5a62acc-8c31-46b5-842f-394035eb8642)
+![2024-12-27_12-29-22](https://github.com/user-attachments/assets/fb7de475-9528-436f-974b-57eca633b9f7)
 
 
 
